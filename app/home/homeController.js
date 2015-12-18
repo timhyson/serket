@@ -4,34 +4,59 @@ serket.controller('homeController', ['$http', function($http) {
 
   var self = this;
 
+  self.array = [];
+  self.trueState = 0;
+  self.falseState = 0;
+
   self.getData = function() {
     $http.get('http://serket.uk/badges/badgelist', 'GET').then(
       function success(response) {
-        console.log(response.data.length);
-      },
+
+        for(var i=0; i<response.data.length; i++){
+
+          var name = response.data[i]["medicineName"];
+          var statePattern = response.data[i]["statePattern"];
+
+          if(name == "PARACETAMOL 500MG TABLETS"){
+            if(statePattern == true){
+              console.log('true')
+              self.trueState++
+            }
+            else {
+              console.log('false')
+              self.falseState++
+              }
+            }
+          else{
+            console.log('not PARACETAMOL')
+          };
+        }
+        console.log(self.trueState);
+        console.log(self.falseState);
+      })
+
       function error(response) {
         alert("Information not available")
-      });
+      };
   }
 
-  var randomScalingFactor = function(){ return Math.round(Math.random()*100)};
 
 	var barChartData = {
-		labels : ["January","February","March","April","May","June","July"],
+		labels : ["PARACETAMOL"],
 		datasets : [
 			{
 				fillColor : "rgba(220,220,220,0.5)",
 				strokeColor : "rgba(220,220,220,0.8)",
 				highlightFill: "rgba(220,220,220,0.75)",
 				highlightStroke: "rgba(220,220,220,1)",
-				data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+				data : [self.trueState]
 			},
 			{
 				fillColor : "rgba(151,187,205,0.5)",
 				strokeColor : "rgba(151,187,205,0.8)",
 				highlightFill : "rgba(151,187,205,0.75)",
 				highlightStroke : "rgba(151,187,205,1)",
-				data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+				data : [self.falseState]
 			}
 		]
 
@@ -42,6 +67,4 @@ serket.controller('homeController', ['$http', function($http) {
 			responsive : true
 		});
 	}
-
-  self.getData();
 }]);
